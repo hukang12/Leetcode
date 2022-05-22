@@ -7,31 +7,27 @@ class LRUCache:
         self.opera_id = 0  # 操作的序号
 
     def get(self, key: int) -> int:
-        latest_id = -1
-        res_v = None
         for i in range(self.capacity):
             if not self.cache_d[i]:
                 return -1
             (k, v) = self.cache_d[i]
             if k == key:
-                if self.opera_sta[i] > latest_id:
-                    latest_id = i
-                    res_v = v
-
-        if res_v is not None:
-            self.opera_sta[latest_id] = self.opera_id
-            self.opera_id += 1
-            return res_v
-        else:
-            return -1
+                self.opera_sta[i] = self.opera_id
+                self.opera_id += 1
+                return v
+        return -1
 
     def put(self, key: int, value: int) -> None:
-        cache_len = self.capacity
         for i in range(self.capacity):
-            if self.cache_d[i]:
-                (k, v) = self.cache_d[i]
-                if k == key:
-                    self.cache_d[i] = (key, value)
+            if not self.cache_d[i]:
+                break
+            (k, v) = self.cache_d[i]
+            if k == key:
+                self.cache_d[i] = (key,value)
+                self.opera_sta[i] = self.opera_id
+                self.opera_id += 1
+                return
+        cache_len = self.capacity
         if self.opera_id < cache_len:
             for i in range(cache_len):
                 if self.opera_sta[i] < 0:
@@ -57,14 +53,17 @@ class LRUCache:
 # param_1 = obj.get(key)
 # obj.put(key,value)
 if __name__ == '__main__':
-    # op_list = ["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
-    # in_list = [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+    op_list = ["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+    in_list = [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
 
     # op_list = ["LRUCache", "get"]
     # in_list = [[1], [0]]
 
-    # op_list = ["LRUCache", "put", "put", "get", "put", "put", "get"]
-    # in_list = [[2], [2, 1], [2, 2], [2], [1, 1], [4, 1], [2]]
+    op_list = ["LRUCache", "put", "put", "get", "put", "put", "get"]
+    in_list = [[2], [2, 1], [2, 2], [2], [1, 1], [4, 1], [2]]
+
+    op_list = ["LRUCache", "put", "put", "put", "put", "get", "get"]
+    in_list = [[2], [2, 1], [1, 1], [2, 3], [4, 1], [1], [2]]
 
     op_list = ["LRUCache", "get", "put", "get", "put", "put", "get", "get"]
     in_list = [[2], [2], [2, 6], [1], [1, 5], [1, 2], [1], [2]]
